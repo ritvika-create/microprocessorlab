@@ -1,0 +1,17 @@
+.model small
+.data
+num1 dw 1234
+num2 db 67
+quot db ?
+rem db ?
+.code
+mov ax,@data
+mov ds,ax
+mov ax,num1
+mov bl,num2
+div bl
+mov quot,al
+mov rem,ah
+mov ah,4ch
+int 21h
+end

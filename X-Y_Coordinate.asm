@@ -1,63 +1,55 @@
-.model small
-
-disp macro msg
-lea dx,msg
-mov ax,09h
-int 21h
-endm
-
-.data
-row  db 02 dup(0)
-column  db 02 dup(0)
-msg1 db 0dh,0ah,"enter x-coordinate ::$"
-msg2 db 0dh,0ah,"enter y-coordinate ::$"
-
-.code
-mov ax,@data
-mov ds,ax
-disp msg1
-lea si,row
-call read
-disp msg2
-lea si,column
-call read
-lea si,row
-mov ah,[si]
-inc si
-mov al,[si]
-sub ax,3030h
-aad
-mov dh,al
-lea si,column
-mov ah,[si]
-inc si
-mov al,[si]
-sub ax,3030h
-aad
-mov dl,al
-
-mov ah,00h
-mov al,03h
-int 10h
-
-mov ah,02h
-int 10h
-jmp final
-
-read proc near
- mov cx,02h
-
-back: mov ah,01h
-      int 21h
-      mov [si],al
-      inc si
-      dec cx
-      jnz back
-  ret
-read endp
-
-final: mov ah,01h
-       int 21h
-       mov ah,4ch
-       int 21h
-end
+.MODEL SMALL
+DISP MACRO MSG
+  LEA DX,MSG
+  MOV AH,09H
+  INT 21H
+ENDM
+.DATA
+ROW DB 02 DUP(0)
+COL DB 02 DUP(0)
+MSG1 DB 0DH,0AH,"ENTER X-CO-ORDINATE::$"
+MSG2 DB 0DH,0AH,"ENTER Y-CO-ORDINATE::$"
+.CODE
+    MOV AX,@DATA
+    MOV DS,AX
+    DISP MSG1
+    MOV SI,OFFSET ROW
+    CALL READ
+    DISP MSG2
+    MOV SI,OFFSET COL
+    CALL READ
+    MOV SI,OFFSET ROW
+    MOV AH,[SI]
+    INC SI
+    MOV AL,[SI]
+    SUB AX,3030H
+    AAD
+    MOV DH,AL
+    MOV SI,OFFSET COL
+    MOV AH,[SI]
+    INC SI
+    MOV AL,[SI]
+    SUB AX,3030H
+    AAD
+    MOV DL,AL
+    MOV AH,00
+    MOV AL,03H
+    INT 10H
+    MOV AH,02H
+    INT 10H
+    JMP FINAL
+ READ PROC NEAR
+     MOV CX,02H
+BACK:MOV AH,01H
+     INT 21H
+     MOV [SI],AL
+     INC SI
+     DEC CX
+     JNZ BACK
+RET
+READ ENDP
+FINAL:MOV AH,01H
+INT 21H
+MOV AH,4CH
+INT 21H
+END

@@ -1,70 +1,72 @@
-.model small
+.MODEL SMALL
 
-display macro msg
-lea dx,msg
-mov ax,09h
-int 21h
-endm
-.data
-msg1 db 0dh,0ah,"enter file name for creation $"
-msg2 db 0dh,0ah,"file created successfully $"
-msg3 db 0dh,0ah,"file creation failed$"
-msg4 db 0dh,0ah,"enter file name to be deleted $"
-msg5 db 0dh,0ah,"file deleted successfully $"
-msg6 db 0dh,0ah,"file deletion failed $"
-fname1 db 02 dup(0)
-fname2 db 02 dup(0)
+DISP MACRO MSG
+    LEA DX,MSG
+    MOV AH,09H
+    INT 21H
+ENDM
 
-.code
-mov ax,@data
-mov ds,ax
+.DATA
+MSG1 DB 0DH,0AH,"ENTER THE FILE NAME TO BE CREATED $"
+MSG2 DB 0DH,0AH,"CREATION SUCCESSFUL $"
+MSG3 DB 0DH,0AH,"CREATION FAILED $"
+MSG4 DB 0DH,0AH,"ENTER THE FILE NAME TO BE DELETION $"
+MSG5 DB 0DH,0AH,"DELETION SUCCESSFUL $"
+MSG6 DB 0DH,0AH,"DELETION FAILED $"
+FNAME1 DB 10 DUP(0)
+FNAME2 DB 10 DUP(0)
 
-display msg1
+.CODE
+MOV AX,@DATA
+MOV DS,AX
 
-mov si,00h
-back1: mov ah,01h
-       int 21h
-       cmp al,0dh
-       je  next1
-       mov fname1[si],al
-       inc si
-       jmp back1
+LEA SI,FNAME1
+DISP MSG1
 
-next1: mov fname1[si],'$'
-       lea si,fname1
-       mov cx,00h
+L1: MOV AH,01H
+    INT 21H
+    CMP AL,0DH
+    JE NEXT1
+    MOV [SI],AL
+    INC SI
+JMP L1
 
-       mov ah,3h
-       int 21h
+NEXT1: MOV [SI],BYTE PTR '$'
+       LEA DX,FNAME1
+       XOR CX,CX
 
-       jc cfail
-       display msg2
-       jmp del
+       MOV AH,3CH
+       INT 21H
 
-cfail: display msg3
+       JC CFAIL
+       DISP MSG2
+       JMP DEL
 
-del: display msg4
+CFAIL:DISP MSG3
 
-mov si,00h
-back2: cmp al,0dh
-       je next2
-       mov fname2[si],al
-       inc si
-       jmp back2
+DEL:LEA SI,FNAME2
+    DISP MSG4
 
-next2: mov fname2[si],'$'
-       lea dx,fname2
+L2: MOV AH,01H
+    INT 21H
+    CMP AL,0DH
+    JE NEXT2
+    MOV [SI],AL
+    INC SI
+JMP L2
 
-       mov ah,41h
-       int 21h
+NEXT2:MOV [SI],BYTE PTR '$'
+      LEA DX,FNAME2
+      
+      MOV AH,41H
+      INT 21H
 
-       jc dfail
-       display msg5
-       jmp last
+      JC DFAIL
+      DISP MSG5
+      JMP FINAL
 
-dfail: display msg6
+DFAIL: DISP MSG6
 
-last: mov ah,4ch
-      int 21h
-end
-
+FINAL:MOV AH,4CH
+      INT 21H
+      END
